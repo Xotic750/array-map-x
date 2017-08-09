@@ -29,12 +29,12 @@ Creates an array with the results of calling a function on every element.
 **Copyright**: Xotic750  
 <a name="exp_module_array-map-x--module.exports"></a>
 
-### `module.exports` ⇒ <code>boolean</code> ⏏
+### `module.exports` ⇒ <code>array</code> ⏏
 This method creates a new array with the results of calling a provided
 function on every element in the calling array.
 
 **Kind**: Exported member  
-**Returns**: <code>boolean</code> - A new array with each element being the result of the
+**Returns**: <code>array</code> - A new array with each element being the result of the
 callback function.  
 **Throws**:
 
