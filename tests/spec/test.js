@@ -93,7 +93,7 @@ describe('map', function () {
     });
 
     it('should set the context correctly', function () {
-      var context = {};
+      var context = [];
       map(testSubject, function (o, i) {
         // eslint-disable-next-line no-invalid-this
         this[i] = o;
