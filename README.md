@@ -23,7 +23,7 @@
 ## array-map-x
 Creates an array with the results of calling a function on every element.
 
-**Version**: 1.0.0  
+**Version**: 1.0.1  
 **Author**: Xotic750 <Xotic750@gmail.com>  
 **License**: [MIT](&lt;https://opensource.org/licenses/MIT&gt;)  
 **Copyright**: Xotic750  
