@@ -1,6 +1,6 @@
 /**
  * @file Creates an array with the results of calling a function on every element.
- * @version 1.2.0
+ * @version 1.3.0
  * @author Xotic750 <Xotic750@gmail.com>
  * @copyright  Xotic750
  * @license {@link <https://opensource.org/licenses/MIT> MIT}
@@ -19,7 +19,7 @@ var $map = function map(array, callBack /* , thisArg */) {
   // If no callback function or if callback is not a callable function
   assertIsFunction(callBack);
   var result = [];
-  result.length = toLength(toObject.length);
+  result.length = toLength(object.length);
   var wrapped = function _wrapped(item, idx, obj) {
     // eslint-disable-next-line no-invalid-this
     result[idx] = callBack.call(this, item, idx, obj);

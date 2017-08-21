@@ -84,6 +84,12 @@ describe('map', function () {
     }).toThrow();
   });
 
+  it('should return an empty array when given an empty array', function () {
+    expect(map([], function () {
+      return true;
+    })).toEqual([]);
+  });
+
   describe('Array object', function () {
     it('should call mapper with the right parameters', function () {
       var mapper = jasmine.createSpy('mapper');
