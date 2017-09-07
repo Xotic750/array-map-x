@@ -1,6 +1,6 @@
 /**
  * @file Creates an array with the results of calling a function on every element.
- * @version 2.0.0
+ * @version 2.1.0
  * @author Xotic750 <Xotic750@gmail.com>
  * @copyright  Xotic750
  * @license {@link <https://opensource.org/licenses/MIT> MIT}
@@ -26,9 +26,9 @@ if (nativeMap) {
     res = attempt.call(Object('ab'), nativeMap, function (item) {
       return item;
     });
-  }
 
-  isWorking = res.threw === false && res.value && res.value.length === 2 && res.value[0] === 'a' && res.value[1] === 'b';
+    isWorking = res.threw === false && res.value && res.value.length === 2 && res.value[0] === 'a' && res.value[1] === 'b';
+  }
 
   if (isWorking) {
     spy = 0;
