@@ -1,6 +1,6 @@
 /**
  * @file Creates an array with the results of calling a function on every element.
- * @version 2.2.0
+ * @version 2.3.0
  * @author Xotic750 <Xotic750@gmail.com>
  * @copyright  Xotic750
  * @license {@link <https://opensource.org/licenses/MIT> MIT}
@@ -9,7 +9,10 @@
 
 'use strict';
 
-var nativeMap = typeof Array.prototype.map === 'function' && Array.prototype.map;
+var cachedCtrs = require('cached-constructors-x');
+var ArrayCtr = cachedCtrs.Array;
+var castObject = cachedCtrs.Object;
+var nativeMap = typeof ArrayCtr.prototype.map === 'function' && ArrayCtr.prototype.map;
 
 var isWorking;
 if (nativeMap) {
@@ -23,7 +26,7 @@ if (nativeMap) {
 
   if (isWorking) {
     spy = '';
-    res = attempt.call(Object('ab'), nativeMap, function (item) {
+    res = attempt.call(castObject('ab'), nativeMap, function (item) {
       return item;
     });
 
@@ -113,7 +116,7 @@ if (nativeMap) {
   };
 } else {
   var splitIfBoxedBug = require('split-if-boxed-bug-x');
-  var toLength = require('to-length-x');
+  var toLength = require('to-length-x').toLength2018;
   var isUndefined = require('validate.io-undefined');
   var toObject = require('to-object-x');
   var assertIsFunction = require('assert-is-function-x');
