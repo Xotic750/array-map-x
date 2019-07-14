@@ -1,24 +1,24 @@
 /**
  * @file Creates an array with the results of calling a function on every element.
- * @version 2.3.0
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
+ * @version 2.3.0.
+ * @author Xotic750 <Xotic750@gmail.com>.
+ * @copyright  Xotic750.
  * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module array-map-x
+ * @module Array-map-x.
  */
 
-'use strict';
+const cachedCtrs = require('cached-constructors-x');
 
-var cachedCtrs = require('cached-constructors-x');
-var ArrayCtr = cachedCtrs.Array;
-var castObject = cachedCtrs.Object;
-var nativeMap = typeof ArrayCtr.prototype.map === 'function' && ArrayCtr.prototype.map;
+const ArrayCtr = cachedCtrs.Array;
+const castObject = cachedCtrs.Object;
+const nativeMap = typeof ArrayCtr.prototype.map === 'function' && ArrayCtr.prototype.map;
 
-var isWorking;
+let isWorking;
+
 if (nativeMap) {
-  var attempt = require('attempt-x');
-  var spy = 0;
-  var res = attempt.call([1, 2], nativeMap, function (item) {
+  const attempt = require('attempt-x');
+  let spy = 0;
+  let res = attempt.call([1, 2], nativeMap, function(item) {
     return item;
   });
 
@@ -26,7 +26,7 @@ if (nativeMap) {
 
   if (isWorking) {
     spy = '';
-    res = attempt.call(castObject('ab'), nativeMap, function (item) {
+    res = attempt.call(castObject('ab'), nativeMap, function(item) {
       return item;
     });
 
@@ -35,36 +35,45 @@ if (nativeMap) {
 
   if (isWorking) {
     spy = 0;
-    res = attempt.call((function () {
-      return arguments;
-    }(1, 2)), nativeMap, function (item) {
-      return item;
-    });
+    res = attempt.call(
+      (function() {
+        return arguments;
+      })(1, 2),
+      nativeMap,
+      function(item) {
+        return item;
+      },
+    );
 
     isWorking = res.threw === false && res.value && res.value.length === 2 && res.value[0] === 1 && res.value[1] === 2;
   }
 
   if (isWorking) {
     spy = 0;
-    res = attempt.call({
-      0: 1,
-      2: 2,
-      length: 3
-    }, nativeMap, function (item) {
-      return item;
-    });
+    res = attempt.call(
+      {
+        0: 1,
+        2: 2,
+        length: 3,
+      },
+      nativeMap,
+      function(item) {
+        return item;
+      },
+    );
 
-    isWorking = res.threw === false && res.value && res.value.length === 3 && (1 in res.value) === false;
+    isWorking = res.threw === false && res.value && res.value.length === 3 && 1 in res.value === false;
   }
 
   if (isWorking) {
-    var doc = typeof document !== 'undefined' && document;
+    const doc = typeof document !== 'undefined' && document;
+
     if (doc) {
       spy = null;
-      var fragment = doc.createDocumentFragment();
-      var div = doc.createElement('div');
+      const fragment = doc.createDocumentFragment();
+      const div = doc.createElement('div');
       fragment.appendChild(div);
-      res = attempt.call(fragment.childNodes, nativeMap, function (item) {
+      res = attempt.call(fragment.childNodes, nativeMap, function(item) {
         return item;
       });
 
@@ -73,17 +82,22 @@ if (nativeMap) {
   }
 
   if (isWorking) {
-    var isStrict = (function () {
+    const isStrict = (function() {
       // eslint-disable-next-line no-invalid-this
       return Boolean(this) === false;
-    }());
+    })();
 
     if (isStrict) {
       spy = null;
-      res = attempt.call([1], nativeMap, function () {
-        // eslint-disable-next-line no-invalid-this
-        spy = typeof this === 'string';
-      }, 'x');
+      res = attempt.call(
+        [1],
+        nativeMap,
+        function() {
+          // eslint-disable-next-line no-invalid-this
+          spy = typeof this === 'string';
+        },
+        'x',
+      );
 
       isWorking = res.threw === false && res.value && res.value.length === 1 && spy === true;
     }
@@ -91,10 +105,10 @@ if (nativeMap) {
 
   if (isWorking) {
     spy = {};
-    var fn = [
+    const fn = [
       'return nativeMap.call("foo", function (_, __, context) {',
       'if (Boolean(context) === false || typeof context !== "object") {',
-      'spy.value = true;}});'
+      'spy.value = true;}});',
     ].join('');
 
     // eslint-disable-next-line no-new-func
@@ -104,10 +118,12 @@ if (nativeMap) {
   }
 }
 
-var $map;
+let $map;
+
 if (nativeMap) {
   $map = function map(array, callBack /* , thisArg */) {
-    var args = [callBack];
+    const args = [callBack];
+
     if (arguments.length > 2) {
       args[1] = arguments[2];
     }
@@ -115,29 +131,30 @@ if (nativeMap) {
     return nativeMap.apply(array, args);
   };
 } else {
-  var splitIfBoxedBug = require('split-if-boxed-bug-x');
-  var toLength = require('to-length-x').toLength2018;
-  var isUndefined = require('validate.io-undefined');
-  var toObject = require('to-object-x');
-  var assertIsFunction = require('assert-is-function-x');
+  const splitIfBoxedBug = require('split-if-boxed-bug-x');
+  const toLength = require('to-length-x').toLength2018;
+  const isUndefined = require('validate.io-undefined');
+  const toObject = require('to-object-x');
+  const assertIsFunction = require('assert-is-function-x');
 
   $map = function map(array, callBack /* , thisArg */) {
-    var object = toObject(array);
+    const object = toObject(array);
     // If no callback function or if callback is not a callable function
     assertIsFunction(callBack);
-    var iterable = splitIfBoxedBug(object);
-    var length = toLength(iterable.length);
-    var thisArg;
+    const iterable = splitIfBoxedBug(object);
+    const length = toLength(iterable.length);
+    let thisArg;
+
     if (arguments.length > 2) {
       thisArg = arguments[2];
     }
 
-    var noThis = isUndefined(thisArg);
-    var result = [];
+    const noThis = isUndefined(thisArg);
+    const result = [];
     result.length = length;
-    for (var i = 0; i < length; i += 1) {
+    for (let i = 0; i < length; i += 1) {
       if (i in iterable) {
-        var item = iterable[i];
+        const item = iterable[i];
         result[i] = noThis ? callBack(item, i, object) : callBack.call(thisArg, item, i, object);
       }
     }
@@ -150,15 +167,15 @@ if (nativeMap) {
  * This method creates a new array with the results of calling a provided
  * function on every element in the calling array.
  *
- * @param {array} array - The array to iterate over.
+ * @param {Array} array - The array to iterate over.
  * @param {Function} callBack - Function that produces an element of the Array.
  * @param {*} [thisArg] - Value to use as this when executing callback.
  * @throws {TypeError} If array is null or undefined.
  * @throws {TypeError} If callBack is not a function.
- * @returns {array} A new array with each element being the result of the
+ * @returns {Array} A new array with each element being the result of the
  * callback function.
  * @example
- * var map = require('array-map-x');
+ * var map = require('array-map-x');.
  *
  * var numbers = [1, 4, 9];
  * var roots = map(numbers, Math.sqrt);
