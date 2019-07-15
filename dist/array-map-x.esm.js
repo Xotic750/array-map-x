@@ -5,7 +5,6 @@ function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { t
 import attempt from 'attempt-x';
 import splitIfBoxedBug from 'split-if-boxed-bug-x';
 import toLength from 'to-length-x';
-import isUndefined from 'validate.io-undefined';
 import toObject from 'to-object-x';
 import assertIsFunction from 'assert-is-function-x';
 /** @type {ArrayConstructor} */
@@ -155,7 +154,7 @@ if (nativeMap) {
       thisArg = arguments[2];
     }
 
-    var noThis = isUndefined(thisArg);
+    var noThis = typeof thisArg === 'undefined';
     var result = [];
     result.length = length;
 

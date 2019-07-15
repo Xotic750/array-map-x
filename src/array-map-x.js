@@ -1,7 +1,6 @@
 import attempt from 'attempt-x';
 import splitIfBoxedBug from 'split-if-boxed-bug-x';
 import toLength from 'to-length-x';
-import isUndefined from 'validate.io-undefined';
 import toObject from 'to-object-x';
 import assertIsFunction from 'assert-is-function-x';
 
@@ -157,7 +156,7 @@ if (nativeMap) {
       thisArg = arguments[2];
     }
 
-    const noThis = isUndefined(thisArg);
+    const noThis = typeof thisArg === 'undefined';
     const result = [];
     result.length = length;
     for (let i = 0; i < length; i += 1) {
