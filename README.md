@@ -21,15 +21,13 @@
 <a name="module_array-map-x"></a>
 
 ## array-map-x
+
 Creates an array with the results of calling a function on every element.
 
-**Version**: 2.3.0  
-**Author**: Xotic750 <Xotic750@gmail.com>  
-**License**: [MIT](&lt;https://opensource.org/licenses/MIT&gt;)  
-**Copyright**: Xotic750  
 <a name="exp_module_array-map-x--module.exports"></a>
 
 ### `module.exports` ⇒ <code>array</code> ⏏
+
 This method creates a new array with the results of calling a provided
 function on every element in the calling array.
 
@@ -41,19 +39,18 @@ callback function.
 - <code>TypeError</code> If array is null or undefined.
 - <code>TypeError</code> If callBack is not a function.
 
+| Param     | Type                  | Description                                     |
+| --------- | --------------------- | ----------------------------------------------- |
+| array     | <code>array</code>    | The array to iterate over.                      |
+| callBack  | <code>function</code> | Function that produces an element of the Array. |
+| [thisArg] | <code>\*</code>       | Value to use as this when executing callback.   |
 
-| Param | Type | Description |
-| --- | --- | --- |
-| array | <code>array</code> | The array to iterate over. |
-| callBack | <code>function</code> | Function that produces an element of the Array. |
-| [thisArg] | <code>\*</code> | Value to use as this when executing callback. |
+**Example**
 
-**Example**  
 ```js
-var map = require('array-map-x');
+import map from 'array-map-x';
 
-var numbers = [1, 4, 9];
-var roots = map(numbers, Math.sqrt);
-// roots is now [1, 2, 3]
-// numbers is still [1, 4, 9]
+const numbers = [1, 4, 9];
+console.log(map(numbers, Math.sqrt));// [1, 2, 3]
+console.log(numbers)); // [1, 4, 9]
 ```
