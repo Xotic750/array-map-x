@@ -2,13 +2,13 @@
 {
   "author": "Graham Fairweather",
   "copywrite": "Copyright (c) 2017",
-  "date": "2019-07-24T00:26:07.063Z",
+  "date": "2019-07-24T16:32:25.445Z",
   "describe": "",
   "description": "Creates an array with the results of calling a function on every element.",
   "file": "array-map-x.js",
   "hash": "38d09fb0b81e9a49cb6b",
   "license": "MIT",
-  "version": "3.0.15"
+  "version": "3.0.16"
 }
 */
 (function webpackUniversalModuleDefinition(root, factory) {
