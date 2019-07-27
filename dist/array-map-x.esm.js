@@ -1,114 +1,128 @@
-var _this = this;
-
-function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
-
 import attempt from 'attempt-x';
 import splitIfBoxedBug from 'split-if-boxed-bug-x';
 import toLength from 'to-length-x';
 import toObject from 'to-object-x';
 import assertIsFunction from 'assert-is-function-x';
-/** @type {ArrayConstructor} */
+import requireObjectCoercible from 'require-object-coercible-x';
+var nm = [].map;
+var nativeMap = typeof nm === 'function' && nm;
 
-var ArrayCtr = [].constructor;
-/** @type {ObjectConstructor} */
+var identity = function identity(item) {
+  return item;
+};
 
-var castObject = {}.constructor;
-/** @type {BooleanConstructor} */
+var test1 = function test1() {
+  var res = attempt.call([1, 2], nativeMap, identity);
+  return res.threw === false && res.value && res.value.length === 2 && res.value[0] === 1 && res.value[1] === 2;
+};
 
-var castBoolean = true.constructor;
-var nativeMap = typeof ArrayCtr.prototype.map === 'function' && ArrayCtr.prototype.map;
-var isWorking;
+var test2 = function test2() {
+  var res = attempt.call({}.constructor('ab'), nativeMap, identity);
+  return res.threw === false && res.value && res.value.length === 2 && res.value[0] === 'a' && res.value[1] === 'b';
+};
 
-if (nativeMap) {
-  var spy = 0;
-  var res = attempt.call([1, 2], nativeMap, function (item) {
-    _newArrowCheck(this, _this);
+var test3 = function test3() {
+  var res = attempt.call(function returnArgs() {
+    /* eslint-disable-next-line prefer-rest-params */
+    return arguments;
+  }(1, 2), nativeMap, identity);
+  return res.threw === false && res.value && res.value.length === 2 && res.value[0] === 1 && res.value[1] === 2;
+};
 
-    return item;
-  }.bind(this));
-  isWorking = res.threw === false && res.value && res.value.length === 2 && res.value[0] === 1 && res.value[1] === 2;
+var test4 = function test4() {
+  var res = attempt.call({
+    0: 1,
+    2: 2,
+    length: 3
+  }, nativeMap, identity);
+  return res.threw === false && res.value && res.value.length === 3 && !(1 in res.value);
+};
 
-  if (isWorking) {
-    spy = '';
-    res = attempt.call(castObject('ab'), nativeMap, function (item) {
-      _newArrowCheck(this, _this);
+var test5 = function test5() {
+  var doc = typeof document !== 'undefined' && document;
 
-      return item;
-    }.bind(this));
-    isWorking = res.threw === false && res.value && res.value.length === 2 && res.value[0] === 'a' && res.value[1] === 'b';
+  if (doc) {
+    var fragment = doc.createDocumentFragment();
+    var div = doc.createElement('div');
+    fragment.appendChild(div);
+    var res = attempt.call(fragment.childNodes, nativeMap, identity);
+    return res.threw === false && res.value && res.value.length === 1 && res.value[0] === div;
   }
 
-  if (isWorking) {
-    spy = 0;
-    res = attempt.call(function returnArgs() {
-      /* eslint-disable-next-line prefer-rest-params */
-      return arguments;
-    }(1, 2), nativeMap, function (item) {
-      _newArrowCheck(this, _this);
+  return true;
+};
 
-      return item;
-    }.bind(this));
-    isWorking = res.threw === false && res.value && res.value.length === 2 && res.value[0] === 1 && res.value[1] === 2;
-  }
+var test6 = function test6() {
+  var isStrict = function returnIsStrict() {
+    /* eslint-disable-next-line babel/no-invalid-this */
+    return true.constructor(this) === false;
+  }();
 
-  if (isWorking) {
-    spy = 0;
-    res = attempt.call({
-      0: 1,
-      2: 2,
-      length: 3
-    }, nativeMap, function (item) {
-      _newArrowCheck(this, _this);
-
-      return item;
-    }.bind(this));
-    isWorking = res.threw === false && res.value && res.value.length === 3 && 1 in res.value === false;
-  }
-
-  if (isWorking) {
-    var doc = typeof document !== 'undefined' && document;
-
-    if (doc) {
-      spy = null;
-      var fragment = doc.createDocumentFragment();
-      var div = doc.createElement('div');
-      fragment.appendChild(div);
-      res = attempt.call(fragment.childNodes, nativeMap, function (item) {
-        _newArrowCheck(this, _this);
-
-        return item;
-      }.bind(this));
-      isWorking = res.threw === false && res.value && res.value.length === 1 && res.value[0] === div;
-    }
-  }
-
-  if (isWorking) {
-    var isStrict = function returnIsStrict() {
+  if (isStrict) {
+    var spy = null;
+    var res = attempt.call([1], nativeMap, function testThis() {
       /* eslint-disable-next-line babel/no-invalid-this */
-      return castBoolean(this) === false;
-    }();
+      spy = typeof this === 'string';
+    }, 'x');
+    return res.threw === false && res.value && res.value.length === 1 && spy === true;
+  }
 
-    if (isStrict) {
-      spy = null;
-      res = attempt.call([1], nativeMap, function () {
-        _newArrowCheck(this, _this);
+  return true;
+};
 
-        /* eslint-disable-next-line babel/no-invalid-this */
-        spy = typeof this === 'string';
-      }.bind(this), 'x');
-      isWorking = res.threw === false && res.value && res.value.length === 1 && spy === true;
+var test7 = function test7() {
+  var spy = {};
+  var fn = 'return nativeMap.call("foo", function (_, __, context) {' + 'if (castBoolean(context) === false || typeof context !== "object") {' + 'spy.value = true;}});';
+  /* eslint-disable-next-line no-new-func */
+
+  var res = attempt(Function('nativeMap', 'spy', 'castBoolean', fn), nativeMap, spy, true.constructor);
+  return res.threw === false && res.value && res.value.length === 3 && spy.value !== true;
+};
+
+var isWorking = true.constructor(nativeMap) && test1() && test2() && test3() && test4() && test5() && test6() && test7();
+
+var patchedMap = function patchedMap() {
+  return function map(array, callBack
+  /* , thisArg */
+  ) {
+    requireObjectCoercible(array);
+    var args = [assertIsFunction(callBack)];
+
+    if (arguments.length > 2) {
+      /* eslint-disable-next-line prefer-rest-params,prefer-destructuring */
+      args[1] = arguments[2];
     }
-  }
 
-  if (isWorking) {
-    spy = {};
-    var fn = ['return nativeMap.call("foo", function (_, __, context) {', 'if (BooleanCtr(context) === false || typeof context !== "object") {', 'spy.value = true;}});'].join('');
-    /* eslint-disable-next-line no-new-func */
+    return nativeMap.apply(array, args);
+  };
+};
 
-    res = attempt(Function('nativeMap', 'spy', 'BooleanCtr', fn), nativeMap, spy);
-    isWorking = res.threw === false && res.value && res.value.length === 3 && spy.value !== true;
-  }
-}
+var implementation = function implementation() {
+  return function map(array, callBack
+  /* , thisArg */
+  ) {
+    var object = toObject(array); // If no callback function or if callback is not a callable function
+
+    assertIsFunction(callBack);
+    var iterable = splitIfBoxedBug(object);
+    var length = toLength(iterable.length);
+    /* eslint-disable-next-line prefer-rest-params,no-void */
+
+    var thisArg = arguments.length > 2 ? arguments[2] : void 0;
+    var noThis = typeof thisArg === 'undefined';
+    var result = [];
+    result.length = length;
+
+    for (var i = 0; i < length; i += 1) {
+      if (i in iterable) {
+        var item = iterable[i];
+        result[i] = noThis ? callBack(item, i, object) : callBack.call(thisArg, item, i, object);
+      }
+    }
+
+    return result;
+  };
+};
 /**
  * This method creates a new array with the results of calling a provided
  * function on every element in the calling array.
@@ -123,53 +137,7 @@ if (nativeMap) {
  */
 
 
-var $map;
-
-if (nativeMap) {
-  $map = function map(array, callBack
-  /* , thisArg */
-  ) {
-    var args = [callBack];
-
-    if (arguments.length > 2) {
-      /* eslint-disable-next-line prefer-rest-params,prefer-destructuring */
-      args[1] = arguments[2];
-    }
-
-    return nativeMap.apply(array, args);
-  };
-} else {
-  $map = function map(array, callBack
-  /* , thisArg */
-  ) {
-    var object = toObject(array); // If no callback function or if callback is not a callable function
-
-    assertIsFunction(callBack);
-    var iterable = splitIfBoxedBug(object);
-    var length = toLength(iterable.length);
-    var thisArg;
-
-    if (arguments.length > 2) {
-      /* eslint-disable-next-line prefer-rest-params,prefer-destructuring */
-      thisArg = arguments[2];
-    }
-
-    var noThis = typeof thisArg === 'undefined';
-    var result = [];
-    result.length = length;
-
-    for (var i = 0; i < length; i += 1) {
-      if (i in iterable) {
-        var item = iterable[i];
-        result[i] = noThis ? callBack(item, i, object) : callBack.call(thisArg, item, i, object);
-      }
-    }
-
-    return result;
-  };
-}
-
-var arrayMap = $map;
-export default arrayMap;
+var $map = isWorking ? patchedMap() : implementation();
+export default $map;
 
 //# sourceMappingURL=array-map-x.esm.js.map

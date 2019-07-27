@@ -2,11 +2,11 @@
 {
   "author": "Graham Fairweather",
   "copywrite": "Copyright (c) 2017",
-  "date": "2019-07-27T01:09:36.235Z",
+  "date": "2019-07-27T12:36:19.303Z",
   "describe": "",
   "description": "Creates an array with the results of calling a function on every element.",
   "file": "array-map-x.js",
-  "hash": "38d09fb0b81e9a49cb6b",
+  "hash": "a40e44fea5042fe16278",
   "license": "MIT",
   "version": "3.0.19"
 }
@@ -1595,117 +1595,131 @@ var assert_is_function_x_esm_assertIsFunction = function assertIsFunction(callba
 
 
 // CONCATENATED MODULE: ./dist/array-map-x.esm.js
-var array_map_x_esm_this = undefined;
-
-function array_map_x_esm_newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
 
 
 
 
 
 
-/** @type {ArrayConstructor} */
+var nm = [].map;
+var nativeMap = typeof nm === 'function' && nm;
 
-var ArrayCtr = [].constructor;
-/** @type {ObjectConstructor} */
+var identity = function identity(item) {
+  return item;
+};
 
-var array_map_x_esm_castObject = {}.constructor;
-/** @type {BooleanConstructor} */
+var array_map_x_esm_test1 = function test1() {
+  var res = attempt_x_esm.call([1, 2], nativeMap, identity);
+  return res.threw === false && res.value && res.value.length === 2 && res.value[0] === 1 && res.value[1] === 2;
+};
 
-var array_map_x_esm_castBoolean = true.constructor;
-var nativeMap = typeof ArrayCtr.prototype.map === 'function' && ArrayCtr.prototype.map;
-var isWorking;
+var array_map_x_esm_test2 = function test2() {
+  var res = attempt_x_esm.call({}.constructor('ab'), nativeMap, identity);
+  return res.threw === false && res.value && res.value.length === 2 && res.value[0] === 'a' && res.value[1] === 'b';
+};
 
-if (nativeMap) {
-  var spy = 0;
-  var res = attempt_x_esm.call([1, 2], nativeMap, function (item) {
-    array_map_x_esm_newArrowCheck(this, array_map_x_esm_this);
+var array_map_x_esm_test3 = function test3() {
+  var res = attempt_x_esm.call(function returnArgs() {
+    /* eslint-disable-next-line prefer-rest-params */
+    return arguments;
+  }(1, 2), nativeMap, identity);
+  return res.threw === false && res.value && res.value.length === 2 && res.value[0] === 1 && res.value[1] === 2;
+};
 
-    return item;
-  }.bind(undefined));
-  isWorking = res.threw === false && res.value && res.value.length === 2 && res.value[0] === 1 && res.value[1] === 2;
+var array_map_x_esm_test4 = function test4() {
+  var res = attempt_x_esm.call({
+    0: 1,
+    2: 2,
+    length: 3
+  }, nativeMap, identity);
+  return res.threw === false && res.value && res.value.length === 3 && !(1 in res.value);
+};
 
-  if (isWorking) {
-    spy = '';
-    res = attempt_x_esm.call(array_map_x_esm_castObject('ab'), nativeMap, function (item) {
-      array_map_x_esm_newArrowCheck(this, array_map_x_esm_this);
+var array_map_x_esm_test5 = function test5() {
+  var doc = typeof document !== 'undefined' && document;
 
-      return item;
-    }.bind(undefined));
-    isWorking = res.threw === false && res.value && res.value.length === 2 && res.value[0] === 'a' && res.value[1] === 'b';
+  if (doc) {
+    var fragment = doc.createDocumentFragment();
+    var div = doc.createElement('div');
+    fragment.appendChild(div);
+    var res = attempt_x_esm.call(fragment.childNodes, nativeMap, identity);
+    return res.threw === false && res.value && res.value.length === 1 && res.value[0] === div;
   }
 
-  if (isWorking) {
-    spy = 0;
-    res = attempt_x_esm.call(function returnArgs() {
-      /* eslint-disable-next-line prefer-rest-params */
-      return arguments;
-    }(1, 2), nativeMap, function (item) {
-      array_map_x_esm_newArrowCheck(this, array_map_x_esm_this);
+  return true;
+};
 
-      return item;
-    }.bind(undefined));
-    isWorking = res.threw === false && res.value && res.value.length === 2 && res.value[0] === 1 && res.value[1] === 2;
-  }
+var array_map_x_esm_test6 = function test6() {
+  var isStrict = function returnIsStrict() {
+    /* eslint-disable-next-line babel/no-invalid-this */
+    return true.constructor(this) === false;
+  }();
 
-  if (isWorking) {
-    spy = 0;
-    res = attempt_x_esm.call({
-      0: 1,
-      2: 2,
-      length: 3
-    }, nativeMap, function (item) {
-      array_map_x_esm_newArrowCheck(this, array_map_x_esm_this);
-
-      return item;
-    }.bind(undefined));
-    isWorking = res.threw === false && res.value && res.value.length === 3 && 1 in res.value === false;
-  }
-
-  if (isWorking) {
-    var doc = typeof document !== 'undefined' && document;
-
-    if (doc) {
-      spy = null;
-      var fragment = doc.createDocumentFragment();
-      var div = doc.createElement('div');
-      fragment.appendChild(div);
-      res = attempt_x_esm.call(fragment.childNodes, nativeMap, function (item) {
-        array_map_x_esm_newArrowCheck(this, array_map_x_esm_this);
-
-        return item;
-      }.bind(undefined));
-      isWorking = res.threw === false && res.value && res.value.length === 1 && res.value[0] === div;
-    }
-  }
-
-  if (isWorking) {
-    var isStrict = function returnIsStrict() {
+  if (isStrict) {
+    var spy = null;
+    var res = attempt_x_esm.call([1], nativeMap, function testThis() {
       /* eslint-disable-next-line babel/no-invalid-this */
-      return array_map_x_esm_castBoolean(this) === false;
-    }();
+      spy = typeof this === 'string';
+    }, 'x');
+    return res.threw === false && res.value && res.value.length === 1 && spy === true;
+  }
 
-    if (isStrict) {
-      spy = null;
-      res = attempt_x_esm.call([1], nativeMap, function () {
-        array_map_x_esm_newArrowCheck(this, array_map_x_esm_this);
+  return true;
+};
 
-        /* eslint-disable-next-line babel/no-invalid-this */
-        spy = typeof this === 'string';
-      }.bind(undefined), 'x');
-      isWorking = res.threw === false && res.value && res.value.length === 1 && spy === true;
+var array_map_x_esm_test7 = function test7() {
+  var spy = {};
+  var fn = 'return nativeMap.call("foo", function (_, __, context) {' + 'if (castBoolean(context) === false || typeof context !== "object") {' + 'spy.value = true;}});';
+  /* eslint-disable-next-line no-new-func */
+
+  var res = attempt_x_esm(Function('nativeMap', 'spy', 'castBoolean', fn), nativeMap, spy, true.constructor);
+  return res.threw === false && res.value && res.value.length === 3 && spy.value !== true;
+};
+
+var isWorking = true.constructor(nativeMap) && array_map_x_esm_test1() && array_map_x_esm_test2() && array_map_x_esm_test3() && array_map_x_esm_test4() && array_map_x_esm_test5() && array_map_x_esm_test6() && array_map_x_esm_test7();
+
+var array_map_x_esm_patchedMap = function patchedMap() {
+  return function map(array, callBack
+  /* , thisArg */
+  ) {
+    require_object_coercible_x_esm(array);
+    var args = [assert_is_function_x_esm(callBack)];
+
+    if (arguments.length > 2) {
+      /* eslint-disable-next-line prefer-rest-params,prefer-destructuring */
+      args[1] = arguments[2];
     }
-  }
 
-  if (isWorking) {
-    spy = {};
-    var fn = ['return nativeMap.call("foo", function (_, __, context) {', 'if (BooleanCtr(context) === false || typeof context !== "object") {', 'spy.value = true;}});'].join('');
-    /* eslint-disable-next-line no-new-func */
+    return nativeMap.apply(array, args);
+  };
+};
 
-    res = attempt_x_esm(Function('nativeMap', 'spy', 'BooleanCtr', fn), nativeMap, spy);
-    isWorking = res.threw === false && res.value && res.value.length === 3 && spy.value !== true;
-  }
-}
+var array_map_x_esm_implementation = function implementation() {
+  return function map(array, callBack
+  /* , thisArg */
+  ) {
+    var object = to_object_x_esm(array); // If no callback function or if callback is not a callable function
+
+    assert_is_function_x_esm(callBack);
+    var iterable = split_if_boxed_bug_x_esm(object);
+    var length = to_length_x_esm(iterable.length);
+    /* eslint-disable-next-line prefer-rest-params,no-void */
+
+    var thisArg = arguments.length > 2 ? arguments[2] : void 0;
+    var noThis = typeof thisArg === 'undefined';
+    var result = [];
+    result.length = length;
+
+    for (var i = 0; i < length; i += 1) {
+      if (i in iterable) {
+        var item = iterable[i];
+        result[i] = noThis ? callBack(item, i, object) : callBack.call(thisArg, item, i, object);
+      }
+    }
+
+    return result;
+  };
+};
 /**
  * This method creates a new array with the results of calling a provided
  * function on every element in the calling array.
@@ -1720,54 +1734,8 @@ if (nativeMap) {
  */
 
 
-var $map;
-
-if (nativeMap) {
-  $map = function map(array, callBack
-  /* , thisArg */
-  ) {
-    var args = [callBack];
-
-    if (arguments.length > 2) {
-      /* eslint-disable-next-line prefer-rest-params,prefer-destructuring */
-      args[1] = arguments[2];
-    }
-
-    return nativeMap.apply(array, args);
-  };
-} else {
-  $map = function map(array, callBack
-  /* , thisArg */
-  ) {
-    var object = to_object_x_esm(array); // If no callback function or if callback is not a callable function
-
-    assert_is_function_x_esm(callBack);
-    var iterable = split_if_boxed_bug_x_esm(object);
-    var length = to_length_x_esm(iterable.length);
-    var thisArg;
-
-    if (arguments.length > 2) {
-      /* eslint-disable-next-line prefer-rest-params,prefer-destructuring */
-      thisArg = arguments[2];
-    }
-
-    var noThis = typeof thisArg === 'undefined';
-    var result = [];
-    result.length = length;
-
-    for (var i = 0; i < length; i += 1) {
-      if (i in iterable) {
-        var item = iterable[i];
-        result[i] = noThis ? callBack(item, i, object) : callBack.call(thisArg, item, i, object);
-      }
-    }
-
-    return result;
-  };
-}
-
-var arrayMap = $map;
-/* harmony default export */ var array_map_x_esm = __webpack_exports__["default"] = (arrayMap);
+var $map = isWorking ? array_map_x_esm_patchedMap() : array_map_x_esm_implementation();
+/* harmony default export */ var array_map_x_esm = __webpack_exports__["default"] = ($map);
 
 
 
