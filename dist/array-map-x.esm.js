@@ -97,7 +97,7 @@ var patchedMap = function patchedMap() {
   };
 };
 
-var implementation = function implementation() {
+export var implementation = function implementation() {
   return function map(array, callBack
   /* , thisArg */
   ) {
@@ -135,7 +135,6 @@ var implementation = function implementation() {
  * @returns {Array} A new array with each element being the result of the
  * callback function.
  */
-
 
 var $map = isWorking ? patchedMap() : implementation();
 export default $map;

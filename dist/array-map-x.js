@@ -2,11 +2,11 @@
 {
   "author": "Graham Fairweather",
   "copywrite": "Copyright (c) 2017",
-  "date": "2019-07-27T21:39:20.260Z",
+  "date": "2019-07-28T14:04:09.710Z",
   "describe": "",
   "description": "Creates an array with the results of calling a function on every element.",
   "file": "array-map-x.js",
-  "hash": "c9134914010001747230",
+  "hash": "8238285d46a9110d2de8",
   "license": "MIT",
   "version": "3.0.20"
 }
@@ -1593,6 +1593,7 @@ var assert_is_function_x_esm_assertIsFunction = function assertIsFunction(callba
 
 
 // CONCATENATED MODULE: ./dist/array-map-x.esm.js
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "implementation", function() { return array_map_x_esm_implementation; });
 
 
 
@@ -1730,7 +1731,6 @@ var array_map_x_esm_implementation = function implementation() {
  * @returns {Array} A new array with each element being the result of the
  * callback function.
  */
-
 
 var $map = isWorking ? array_map_x_esm_patchedMap() : array_map_x_esm_implementation();
 /* harmony default export */ var array_map_x_esm = __webpack_exports__["default"] = ($map);
