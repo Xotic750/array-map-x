@@ -2,7 +2,7 @@
 {
   "author": "Graham Fairweather",
   "copywrite": "Copyright (c) 2017",
-  "date": "2019-08-05T15:46:18.914Z",
+  "date": "2019-08-05T17:22:58.641Z",
   "describe": "",
   "description": "Creates an array with the results of calling a function on every element.",
   "file": "array-map-x.js",
