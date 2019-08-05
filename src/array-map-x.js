@@ -74,15 +74,13 @@ const test6 = function test6() {
 
   if (isStrict) {
     let spy = null;
-    const res = attempt.call(
-      [1],
-      nativeMap,
-      function testThis() {
-        /* eslint-disable-next-line babel/no-invalid-this */
-        spy = typeof this === 'string';
-      },
-      'x',
-    );
+
+    const testThis = function testThis() {
+      /* eslint-disable-next-line babel/no-invalid-this */
+      spy = typeof this === 'string';
+    };
+
+    const res = attempt.call([1], nativeMap, testThis, 'x');
 
     return res.threw === false && res.value && res.value.length === 1 && spy === true;
   }
@@ -105,41 +103,37 @@ const test7 = function test7() {
 
 const isWorking = true.constructor(nativeMap) && test1() && test2() && test3() && test4() && test5() && test6() && test7();
 
-const patchedMap = function patchedMap() {
-  return function map(array, callBack /* , thisArg */) {
-    requireObjectCoercible(array);
-    const args = [assertIsFunction(callBack)];
+const patchedMap = function map(array, callBack /* , thisArg */) {
+  requireObjectCoercible(array);
+  const args = [assertIsFunction(callBack)];
 
-    if (arguments.length > 2) {
-      /* eslint-disable-next-line prefer-rest-params,prefer-destructuring */
-      args[1] = arguments[2];
-    }
+  if (arguments.length > 2) {
+    /* eslint-disable-next-line prefer-rest-params,prefer-destructuring */
+    args[1] = arguments[2];
+  }
 
-    return nativeMap.apply(array, args);
-  };
+  return nativeMap.apply(array, args);
 };
 
-export const implementation = function implementation() {
-  return function map(array, callBack /* , thisArg */) {
-    const object = toObject(array);
-    // If no callback function or if callback is not a callable function
-    assertIsFunction(callBack);
-    const iterable = splitIfBoxedBug(object);
-    const length = toLength(iterable.length);
-    /* eslint-disable-next-line prefer-rest-params,no-void */
-    const thisArg = arguments.length > 2 ? arguments[2] : void 0;
-    const noThis = typeof thisArg === 'undefined';
-    const result = [];
-    result.length = length;
-    for (let i = 0; i < length; i += 1) {
-      if (i in iterable) {
-        const item = iterable[i];
-        result[i] = noThis ? callBack(item, i, object) : callBack.call(thisArg, item, i, object);
-      }
+export const implementation = function map(array, callBack /* , thisArg */) {
+  const object = toObject(array);
+  // If no callback function or if callback is not a callable function
+  assertIsFunction(callBack);
+  const iterable = splitIfBoxedBug(object);
+  const length = toLength(iterable.length);
+  /* eslint-disable-next-line prefer-rest-params,no-void */
+  const thisArg = arguments.length > 2 ? arguments[2] : void 0;
+  const noThis = typeof thisArg === 'undefined';
+  const result = [];
+  result.length = length;
+  for (let i = 0; i < length; i += 1) {
+    if (i in iterable) {
+      const item = iterable[i];
+      result[i] = noThis ? callBack(item, i, object) : callBack.call(thisArg, item, i, object);
     }
+  }
 
-    return result;
-  };
+  return result;
 };
 
 /**
@@ -154,6 +148,6 @@ export const implementation = function implementation() {
  * @returns {Array} A new array with each element being the result of the
  * callback function.
  */
-const $map = isWorking ? patchedMap() : implementation();
+const $map = isWorking ? patchedMap : implementation;
 
 export default $map;

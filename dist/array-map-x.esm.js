@@ -60,10 +60,13 @@ var test6 = function test6() {
 
   if (isStrict) {
     var spy = null;
-    var res = attempt.call([1], nativeMap, function testThis() {
+
+    var testThis = function testThis() {
       /* eslint-disable-next-line babel/no-invalid-this */
       spy = typeof this === 'string';
-    }, 'x');
+    };
+
+    var res = attempt.call([1], nativeMap, testThis, 'x');
     return res.threw === false && res.value && res.value.length === 1 && spy === true;
   }
 
@@ -81,47 +84,43 @@ var test7 = function test7() {
 
 var isWorking = true.constructor(nativeMap) && test1() && test2() && test3() && test4() && test5() && test6() && test7();
 
-var patchedMap = function patchedMap() {
-  return function map(array, callBack
-  /* , thisArg */
-  ) {
-    requireObjectCoercible(array);
-    var args = [assertIsFunction(callBack)];
+var patchedMap = function map(array, callBack
+/* , thisArg */
+) {
+  requireObjectCoercible(array);
+  var args = [assertIsFunction(callBack)];
 
-    if (arguments.length > 2) {
-      /* eslint-disable-next-line prefer-rest-params,prefer-destructuring */
-      args[1] = arguments[2];
-    }
+  if (arguments.length > 2) {
+    /* eslint-disable-next-line prefer-rest-params,prefer-destructuring */
+    args[1] = arguments[2];
+  }
 
-    return nativeMap.apply(array, args);
-  };
+  return nativeMap.apply(array, args);
 };
 
-export var implementation = function implementation() {
-  return function map(array, callBack
-  /* , thisArg */
-  ) {
-    var object = toObject(array); // If no callback function or if callback is not a callable function
+export var implementation = function map(array, callBack
+/* , thisArg */
+) {
+  var object = toObject(array); // If no callback function or if callback is not a callable function
 
-    assertIsFunction(callBack);
-    var iterable = splitIfBoxedBug(object);
-    var length = toLength(iterable.length);
-    /* eslint-disable-next-line prefer-rest-params,no-void */
+  assertIsFunction(callBack);
+  var iterable = splitIfBoxedBug(object);
+  var length = toLength(iterable.length);
+  /* eslint-disable-next-line prefer-rest-params,no-void */
 
-    var thisArg = arguments.length > 2 ? arguments[2] : void 0;
-    var noThis = typeof thisArg === 'undefined';
-    var result = [];
-    result.length = length;
+  var thisArg = arguments.length > 2 ? arguments[2] : void 0;
+  var noThis = typeof thisArg === 'undefined';
+  var result = [];
+  result.length = length;
 
-    for (var i = 0; i < length; i += 1) {
-      if (i in iterable) {
-        var item = iterable[i];
-        result[i] = noThis ? callBack(item, i, object) : callBack.call(thisArg, item, i, object);
-      }
+  for (var i = 0; i < length; i += 1) {
+    if (i in iterable) {
+      var item = iterable[i];
+      result[i] = noThis ? callBack(item, i, object) : callBack.call(thisArg, item, i, object);
     }
+  }
 
-    return result;
-  };
+  return result;
 };
 /**
  * This method creates a new array with the results of calling a provided
@@ -136,7 +135,7 @@ export var implementation = function implementation() {
  * callback function.
  */
 
-var $map = isWorking ? patchedMap() : implementation();
+var $map = isWorking ? patchedMap : implementation;
 export default $map;
 
 //# sourceMappingURL=array-map-x.esm.js.map
