@@ -2,11 +2,11 @@
 {
   "author": "Graham Fairweather",
   "copywrite": "Copyright (c) 2017",
-  "date": "2019-08-05T11:54:21.628Z",
+  "date": "2019-08-05T13:30:46.397Z",
   "describe": "",
   "description": "Creates an array with the results of calling a function on every element.",
   "file": "array-map-x.js",
-  "hash": "99d2554c2070f3c53437",
+  "hash": "a0e83f4c7f17079f5b3e",
   "license": "MIT",
   "version": "3.0.21"
 }
@@ -1670,6 +1670,10 @@ var array_map_x_esm_test4 = function test4() {
   return res.threw === false && res.value && res.value.length === 3 && !(1 in res.value);
 };
 
+var getResultTest5 = function getResultTest5(res, div) {
+  return res.threw === false && res.value && res.value.length === 1 && res.value[0] === div;
+};
+
 var array_map_x_esm_test5 = function test5() {
   var doc = typeof document !== 'undefined' && document;
 
@@ -1678,7 +1682,7 @@ var array_map_x_esm_test5 = function test5() {
     var div = doc.createElement('div');
     fragment.appendChild(div);
     var res = attempt_x_esm.call(fragment.childNodes, nativeMap, identity);
-    return res.threw === false && res.value && res.value.length === 1 && res.value[0] === div;
+    return getResultTest5(res, div);
   }
 
   return true;

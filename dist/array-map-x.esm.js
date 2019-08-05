@@ -38,6 +38,10 @@ var test4 = function test4() {
   return res.threw === false && res.value && res.value.length === 3 && !(1 in res.value);
 };
 
+var getResultTest5 = function getResultTest5(res, div) {
+  return res.threw === false && res.value && res.value.length === 1 && res.value[0] === div;
+};
+
 var test5 = function test5() {
   var doc = typeof document !== 'undefined' && document;
 
@@ -46,7 +50,7 @@ var test5 = function test5() {
     var div = doc.createElement('div');
     fragment.appendChild(div);
     var res = attempt.call(fragment.childNodes, nativeMap, identity);
-    return res.threw === false && res.value && res.value.length === 1 && res.value[0] === div;
+    return getResultTest5(res, div);
   }
 
   return true;
