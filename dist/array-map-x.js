@@ -2,11 +2,11 @@
 {
   "author": "Graham Fairweather",
   "copywrite": "Copyright (c) 2017",
-  "date": "2019-08-12T22:14:37.001Z",
+  "date": "2019-08-13T05:54:20.622Z",
   "describe": "",
   "description": "Creates an array with the results of calling a function on every element.",
   "file": "array-map-x.js",
-  "hash": "1107a61b502760bfb30f",
+  "hash": "0935a816928ed05f104d",
   "license": "MIT",
   "version": "3.0.22"
 }
@@ -23,19 +23,34 @@
 })((function () {
   'use strict';
 
-  if (typeof self !== 'undefined') {
-    return self;
-  }
+  /* eslint-disable-next-line no-var */
+  var magic;
 
-  if (typeof window !== 'undefined') {
+  try {
+    /* eslint-disable-next-line no-extend-native */
+    Object.defineProperty(Object.prototype, '__magic__', {
+      /* eslint-disable-next-line object-shorthand */
+      get: function() {
+        return this;
+      },
+      /* eslint-disable-next-line prettier/prettier */
+      configurable: true
+    });
+
+    if (typeof __magic__ === 'undefined') {
+      magic = typeof self === 'undefined' ? window : self;
+    } else {
+      /* eslint-disable-next-line no-undef */
+      magic = __magic__;
+    }
+
+    /* eslint-disable-next-line no-underscore-dangle,no-use-extend-native/no-use-extend-native */
+    delete Object.prototype.__magic__;
+
+    return magic;
+  } catch (error) {
     return window;
   }
-
-  if (typeof global !== 'undefined') {
-    return global;
-  }
-
-  return Function('return this')();
 }()), function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
