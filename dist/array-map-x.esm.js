@@ -4,37 +4,49 @@ import assertIsFunction from 'assert-is-function-x';
 import requireObjectCoercible from 'require-object-coercible-x';
 import all from 'array-all-x';
 import toBoolean from 'to-boolean-x';
+import methodize from 'simple-methodize-x';
+import call from 'simple-call-x';
 var nm = [].map;
-var nativeMap = typeof nm === 'function' && nm;
+var nativeMap = typeof nm === 'function' && methodize(nm);
 
 var identity = function identity(item) {
   return item;
 };
 
 var test1 = function test1() {
-  var res = attempt.call([1, 2], nativeMap, identity);
+  var res = attempt(function attemptee() {
+    return nativeMap([1, 2], identity);
+  });
   return res.threw === false && res.value && res.value.length === 2 && res.value[0] === 1 && res.value[1] === 2;
 };
 
 var test2 = function test2() {
-  var res = attempt.call(toObject('ab'), nativeMap, identity);
+  var res = attempt(function attemptee() {
+    return nativeMap(toObject('ab'), identity);
+  });
   return res.threw === false && res.value && res.value.length === 2 && res.value[0] === 'a' && res.value[1] === 'b';
 };
 
 var test3 = function test3() {
-  var res = attempt.call(function returnArgs() {
-    /* eslint-disable-next-line prefer-rest-params */
-    return arguments;
-  }(1, 2), nativeMap, identity);
+  var res = attempt(function attemptee() {
+    var args = function returnArgs() {
+      /* eslint-disable-next-line prefer-rest-params */
+      return arguments;
+    }(1, 2);
+
+    return nativeMap(args, identity);
+  });
   return res.threw === false && res.value && res.value.length === 2 && res.value[0] === 1 && res.value[1] === 2;
 };
 
 var test4 = function test4() {
-  var res = attempt.call({
-    0: 1,
-    2: 2,
-    length: 3
-  }, nativeMap, identity);
+  var res = attempt(function attemptee() {
+    return nativeMap({
+      0: 1,
+      2: 2,
+      length: 3
+    }, identity);
+  });
   return res.threw === false && res.value && res.value.length === 3 && !(1 in res.value);
 };
 
@@ -42,26 +54,28 @@ var getResultTest5 = function getResultTest5(res, div) {
   return res.threw === false && res.value && res.value.length === 1 && res.value[0] === div;
 };
 
-var test5 = function test5() {
-  var doc = typeof document !== 'undefined' && document;
+var doc = typeof document !== 'undefined' && document;
 
+var test5 = function test5() {
   if (doc) {
     var fragment = doc.createDocumentFragment();
     var div = doc.createElement('div');
     fragment.appendChild(div);
-    var res = attempt.call(fragment.childNodes, nativeMap, identity);
+    var res = attempt(function attemptee() {
+      return nativeMap(fragment.childNodes, identity);
+    });
     return getResultTest5(res, div);
   }
 
   return true;
 };
 
-var test6 = function test6() {
-  var isStrict = function returnIsStrict() {
-    /* eslint-disable-next-line babel/no-invalid-this */
-    return toBoolean(this) === false;
-  }();
+var isStrict = function returnIsStrict() {
+  /* eslint-disable-next-line babel/no-invalid-this */
+  return toBoolean(this) === false;
+}();
 
+var test6 = function test6() {
   if (isStrict) {
     var spy = null;
 
@@ -70,7 +84,9 @@ var test6 = function test6() {
       spy = typeof this === 'string';
     };
 
-    var res = attempt.call([1], nativeMap, testThis, 'x');
+    var res = attempt(function attemptee() {
+      return nativeMap([1], testThis, 'x');
+    });
     return res.threw === false && res.value && res.value.length === 1 && spy === true;
   }
 
@@ -79,10 +95,11 @@ var test6 = function test6() {
 
 var test7 = function test7() {
   var spy = {};
-  var fn = 'return nativeMap.call("foo", function (_, __, context) {' + 'if (castBoolean(context) === false || typeof context !== "object") {' + 'spy.value = true;}});';
-  /* eslint-disable-next-line no-new-func */
-
-  var res = attempt(Function('nativeMap', 'spy', 'castBoolean', fn), nativeMap, spy, toBoolean);
+  var fn = 'return nativeMap("foo", function (_, __, context) {' + 'if (castBoolean(context) === false || typeof context !== "object") {' + 'spy.value = true;}});';
+  var res = attempt(function attemptee() {
+    /* eslint-disable-next-line no-new-func */
+    return Function('nativeMap', 'spy', 'castBoolean', fn)(nativeMap, spy, toBoolean);
+  });
   return res.threw === false && res.value && res.value.length === 3 && spy.value !== true;
 };
 
@@ -91,15 +108,8 @@ var isWorking = toBoolean(nativeMap) && test1() && test2() && test3() && test4()
 var patchedMap = function map(array, callBack
 /* , thisArg */
 ) {
-  requireObjectCoercible(array);
-  var args = [assertIsFunction(callBack)];
-
-  if (arguments.length > 2) {
-    /* eslint-disable-next-line prefer-rest-params,prefer-destructuring */
-    args[1] = arguments[2];
-  }
-
-  return nativeMap.apply(array, args);
+  /* eslint-disable-next-line prefer-rest-params */
+  return nativeMap(requireObjectCoercible(array), assertIsFunction(callBack), arguments[2]);
 };
 
 export var implementation = function map(array, callBack
@@ -117,7 +127,7 @@ export var implementation = function map(array, callBack
 
     if (i in arguments[2]) {
       /* eslint-disable-next-line babel/no-invalid-this,prefer-rest-params */
-      result[i] = callBack.call(this, arguments[0], i, object);
+      result[i] = call(callBack, this, [arguments[0], i, object]);
     }
   };
   /* eslint-disable-next-line prefer-rest-params */
