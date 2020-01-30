@@ -288,7 +288,7 @@ const createArrayLike = function(arr) {
       const callback = jest.fn();
       const string = '1';
       map(string, callback);
-      expect(callback).toHaveBeenCalledWith('1', 0, string);
+      expect(callback).toHaveBeenCalledWith('1', 0, Object(string));
     });
 
     itHasDoc('should work wih DOM elements', function() {
